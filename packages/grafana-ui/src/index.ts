@@ -44,6 +44,7 @@ export {
 } from './components/ColorPicker/SeriesColorPickerPopover';
 export { EmptySearchResult } from './components/EmptySearchResult/EmptySearchResult';
 export { EmptyState } from './components/EmptyState/EmptyState';
+export { TailwindExample } from './components/TailwindExample/TailwindExample';
 export { UnitPicker } from './components/UnitPicker/UnitPicker';
 export { StatsPicker } from './components/StatsPicker/StatsPicker';
 export { RefreshPicker, defaultIntervals } from './components/RefreshPicker/RefreshPicker';
