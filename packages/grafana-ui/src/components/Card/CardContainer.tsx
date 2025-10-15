@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 
-import { useStyles2 } from '../../themes/ThemeContext';
+import { useStyles2, useTheme2 } from '../../themes/ThemeContext';
 import { getFocusStyles } from '../../themes/mixins';
 
 /**
@@ -17,23 +17,23 @@ export interface CardInnerProps {
 
 /** @deprecated This component will be removed in a future release */
 const CardInner = ({ children, href }: CardInnerProps) => {
-  const { inner } = useStyles2(getCardInnerStyles);
+  const theme = useTheme2();
   return href ? (
-    <a className={inner} href={href}>
+    <a
+      className={cx(
+        'flex w-full',
+        css({
+          padding: theme.spacing(2),
+        })
+      )}
+      href={href}
+    >
       {children}
     </a>
   ) : (
     <>{children}</>
   );
 };
-
-const getCardInnerStyles = (theme: GrafanaTheme2) => ({
-  inner: css({
-    display: 'flex',
-    width: '100%',
-    padding: theme.spacing(2),
-  }),
-});
 
 /**
  * @public

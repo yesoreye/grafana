@@ -5,7 +5,7 @@ import * as React from 'react';
 import { GrafanaTheme2 } from '@grafana/data';
 import { t } from '@grafana/i18n';
 
-import { useStyles2 } from '../../themes/ThemeContext';
+import { useStyles2, useTheme2 } from '../../themes/ThemeContext';
 import { getFocusStyles } from '../../themes/mixins';
 
 import { CardContainer, CardContainerProps, getCardContainerStyles } from './CardContainer';
@@ -100,6 +100,7 @@ interface ChildProps {
 /** Main heading for the card */
 const Heading = ({ children, className, 'aria-label': ariaLabel }: ChildProps & { 'aria-label'?: string }) => {
   const context = useContext(CardContext);
+  const theme = useTheme2();
   const styles = useStyles2(getHeadingStyles);
 
   const { href, onClick, isSelected } = context ?? {
@@ -110,7 +111,24 @@ const Heading = ({ children, className, 'aria-label': ariaLabel }: ChildProps & 
   const optionLabel = t('grafana-ui.card.option', 'option');
 
   return (
-    <h2 className={cx(styles.heading, className)}>
+    <h2
+      className={cx(
+        'flex justify-between items-center w-full mb-0',
+        css({
+          gridArea: 'Heading',
+          justifySelf: 'start',
+          fontSize: theme.typography.size.md,
+          letterSpacing: 'inherit',
+          lineHeight: theme.typography.body.lineHeight,
+          color: theme.colors.text.primary,
+          fontWeight: theme.typography.fontWeightMedium,
+          '& input[readonly]': {
+            cursor: 'inherit',
+          },
+        }),
+        className
+      )}
+    >
       {href ? (
         <a href={href} className={styles.linkHack} aria-label={ariaLabel} onClick={onClick}>
           {children}
@@ -130,23 +148,6 @@ const Heading = ({ children, className, 'aria-label': ariaLabel }: ChildProps & 
 Heading.displayName = 'Heading';
 
 const getHeadingStyles = (theme: GrafanaTheme2) => ({
-  heading: css({
-    gridArea: 'Heading',
-    justifySelf: 'start',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: 0,
-    fontSize: theme.typography.size.md,
-    letterSpacing: 'inherit',
-    lineHeight: theme.typography.body.lineHeight,
-    color: theme.colors.text.primary,
-    fontWeight: theme.typography.fontWeightMedium,
-    '& input[readonly]': {
-      cursor: 'inherit',
-    },
-  }),
   linkHack: css({
     all: 'unset',
     '&::after': {
@@ -173,47 +174,63 @@ const getHeadingStyles = (theme: GrafanaTheme2) => ({
 });
 
 const Tags = ({ children, className }: ChildProps) => {
-  const styles = useStyles2(getTagStyles);
-  return <div className={cx(styles.tagList, className)}>{children}</div>;
-};
-Tags.displayName = 'Tags';
-
-const getTagStyles = (theme: GrafanaTheme2) => ({
-  tagList: css({
-    position: 'relative',
-    gridArea: 'Tags',
-    alignSelf: 'center',
-  }),
-});
-
-/** Card description text */
-const Description = ({ children, className }: ChildProps) => {
-  const styles = useStyles2(getDescriptionStyles);
-  const Element = typeof children === 'string' ? 'p' : 'div';
-  return <Element className={cx(styles.description, className)}>{children}</Element>;
-};
-Description.displayName = 'Description';
-
-const getDescriptionStyles = (theme: GrafanaTheme2) => ({
-  description: css({
-    width: '100%',
-    gridArea: 'Description',
-    margin: theme.spacing(1, 0, 0),
-    color: theme.colors.text.secondary,
-    lineHeight: theme.typography.body.lineHeight,
-  }),
-});
-
-const Figure = ({ children, align = 'start', className }: ChildProps & { align?: 'start' | 'center' }) => {
-  const styles = useStyles2(getFigureStyles);
   return (
     <div
       className={cx(
-        styles.media,
-        className,
+        'relative self-center',
         css({
+          gridArea: 'Tags',
+        }),
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
+};
+Tags.displayName = 'Tags';
+
+/** Card description text */
+const Description = ({ children, className }: ChildProps) => {
+  const theme = useTheme2();
+  const Element = typeof children === 'string' ? 'p' : 'div';
+  return (
+    <Element
+      className={cx(
+        'w-full',
+        css({
+          gridArea: 'Description',
+          margin: theme.spacing(1, 0, 0),
+          color: theme.colors.text.secondary,
+          lineHeight: theme.typography.body.lineHeight,
+        }),
+        className
+      )}
+    >
+      {children}
+    </Element>
+  );
+};
+Description.displayName = 'Description';
+
+const Figure = ({ children, align = 'start', className }: ChildProps & { align?: 'start' | 'center' }) => {
+  const theme = useTheme2();
+  return (
+    <div
+      className={cx(
+        'relative w-10',
+        css({
+          gridArea: 'Figure',
+          marginRight: theme.spacing(2),
+          '> img': {
+            width: '100%',
+          },
+          '&:empty': {
+            display: 'none',
+          },
           alignSelf: align,
-        })
+        }),
+        className
       )}
     >
       {children}
@@ -222,34 +239,26 @@ const Figure = ({ children, align = 'start', className }: ChildProps & { align?:
 };
 Figure.displayName = 'Figure';
 
-const getFigureStyles = (theme: GrafanaTheme2) => ({
-  media: css({
-    position: 'relative',
-    gridArea: 'Figure',
-
-    marginRight: theme.spacing(2),
-    width: '40px',
-
-    '> img': {
-      width: '100%',
-    },
-
-    '&:empty': {
-      display: 'none',
-    },
-  }),
-});
-
 const Meta = memo(({ children, className, separator = '|' }: ChildProps & { separator?: string }) => {
-  const styles = useStyles2(getMetaStyles);
+  const theme = useTheme2();
   let meta = children;
 
   const filtered = React.Children.toArray(children).filter(Boolean);
   if (!filtered.length) {
     return null;
   }
+
+  const metadataItemClass = css({
+    // Needed to allow for clickable children in metadata
+    zIndex: 0,
+  });
+
+  const separatorClass = css({
+    margin: `0 ${theme.spacing(1)}`,
+  });
+
   meta = filtered.map((element, i) => (
-    <div key={`element_${i}`} className={styles.metadataItem}>
+    <div key={`element_${i}`} className={metadataItemClass}>
       {element}
     </div>
   ));
@@ -257,36 +266,31 @@ const Meta = memo(({ children, className, separator = '|' }: ChildProps & { sepa
   if (filtered.length > 1 && separator) {
     meta = filtered.reduce((prev, curr, i) => [
       prev,
-      <span key={`separator_${i}`} className={styles.separator}>
+      <span key={`separator_${i}`} className={separatorClass}>
         {separator}
       </span>,
       curr,
     ]);
   }
-  return <div className={cx(styles.metadata, className)}>{meta}</div>;
+  return (
+    <div
+      className={cx(
+        'flex items-center w-full overflow-anywhere',
+        css({
+          gridArea: 'Meta',
+          fontSize: theme.typography.size.sm,
+          color: theme.colors.text.secondary,
+          margin: theme.spacing(0.5, 0, 0),
+          lineHeight: theme.typography.bodySmall.lineHeight,
+        }),
+        className
+      )}
+    >
+      {meta}
+    </div>
+  );
 });
 Meta.displayName = 'Meta';
-
-const getMetaStyles = (theme: GrafanaTheme2) => ({
-  metadata: css({
-    gridArea: 'Meta',
-    display: 'flex',
-    alignItems: 'center',
-    width: '100%',
-    fontSize: theme.typography.size.sm,
-    color: theme.colors.text.secondary,
-    margin: theme.spacing(0.5, 0, 0),
-    lineHeight: theme.typography.bodySmall.lineHeight,
-    overflowWrap: 'anywhere',
-  }),
-  metadataItem: css({
-    // Needed to allow for clickable children in metadata
-    zIndex: 0,
-  }),
-  separator: css({
-    margin: `0 ${theme.spacing(1)}`,
-  }),
-});
 
 interface ActionsProps extends ChildProps {
   children?: React.ReactNode;
@@ -294,40 +298,31 @@ interface ActionsProps extends ChildProps {
 }
 
 const BaseActions = ({ children, disabled, variant, className }: ActionsProps) => {
-  const styles = useStyles2(getActionStyles);
+  const theme = useTheme2();
   const context = useContext(CardContext);
   const isDisabled = context?.disabled || disabled;
 
-  const css = variant === 'primary' ? styles.actions : styles.secondaryActions;
+  const isPrimary = variant === 'primary';
   return (
-    <div className={cx(css, className)}>
+    <div
+      className={cx(
+        'flex flex-row flex-wrap',
+        css({
+          gap: theme.spacing(1),
+          gridArea: isPrimary ? 'Actions' : 'Secondary',
+          marginTop: theme.spacing(2),
+          alignSelf: isPrimary ? 'initial' : 'center',
+          color: isPrimary ? 'inherit' : theme.colors.text.secondary,
+        }),
+        className
+      )}
+    >
       {React.Children.map(children, (child) => {
         return React.isValidElement(child) ? cloneElement(child, { disabled: isDisabled, ...child.props }) : null;
       })}
     </div>
   );
 };
-
-const getActionStyles = (theme: GrafanaTheme2) => ({
-  actions: css({
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: theme.spacing(1),
-    gridArea: 'Actions',
-    marginTop: theme.spacing(2),
-  }),
-  secondaryActions: css({
-    alignSelf: 'center',
-    color: theme.colors.text.secondary,
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: theme.spacing(1),
-    gridArea: 'Secondary',
-    marginTop: theme.spacing(2),
-  }),
-});
 
 const Actions = ({ children, disabled, className }: ChildProps) => {
   return (
@@ -361,11 +356,6 @@ export const getCardStyles = (theme: GrafanaTheme2) => {
       flexWrap: 'wrap',
     }),
     ...getHeadingStyles(theme),
-    ...getMetaStyles(theme),
-    ...getDescriptionStyles(theme),
-    ...getFigureStyles(theme),
-    ...getActionStyles(theme),
-    ...getTagStyles(theme),
   };
 };
 
