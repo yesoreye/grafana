@@ -1,0 +1,32 @@
+/* Tailwind CSS imports */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 
+ * Custom Tailwind utilities for Grafana
+ * These utilities can be used alongside existing Emotion styles during migration
+ */
+@layer components {
+  .grafana-button {
+    @apply px-4 py-2 rounded transition-colors;
+  }
+  
+  .grafana-card {
+    @apply rounded-lg shadow-md p-4;
+  }
+  
+  .grafana-input {
+    @apply w-full px-3 py-2 border rounded focus:outline-none focus:ring-2;
+  }
+}
+
+@layer utilities {
+  .text-grafana-primary {
+    color: var(--primary-text-color);
+  }
+  
+  .bg-grafana-panel {
+    background-color: var(--panel-background);
+  }
+}
