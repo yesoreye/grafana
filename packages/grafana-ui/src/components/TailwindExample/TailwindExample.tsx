@@ -1,6 +1,9 @@
-import React from 'react';
 import { css } from '@emotion/css';
+import React from 'react';
+
 import { GrafanaTheme2 } from '@grafana/data';
+import { t, Trans } from '@grafana/i18n';
+
 import { useTheme2 } from '../../themes/ThemeContext';
 
 /**
@@ -17,38 +20,72 @@ export const TailwindExample: React.FC = () => {
 
   return (
     <div className="p-4 space-y-4">
-      <h2 className="text-2xl font-bold mb-4">Tailwind CSS Integration Example</h2>
+      <h2 className="text-2xl font-bold mb-4">
+        <Trans i18nKey="tailwind-example.title">Tailwind CSS Integration Example</Trans>
+      </h2>
 
       {/* Pure Tailwind approach */}
       <div className="grafana-card">
-        <h3 className="text-lg font-semibold mb-2">Pure Tailwind Card</h3>
-        <p className="text-gray-700">This card uses only Tailwind utility classes for styling.</p>
-        <button className="grafana-button bg-blue-500 hover:bg-blue-600 text-white mt-3">Tailwind Button</button>
+        <h3 className="text-lg font-semibold mb-2">
+          <Trans i18nKey="tailwind-example.pure-tailwind-title">Pure Tailwind Card</Trans>
+        </h3>
+        <p className="text-gray-700">
+          <Trans i18nKey="tailwind-example.pure-tailwind-description">
+            This card uses only Tailwind utility classes for styling.
+          </Trans>
+        </p>
+        <button className="grafana-button bg-blue-500 hover:bg-blue-600 text-white mt-3">
+          <Trans i18nKey="tailwind-example.tailwind-button">Tailwind Button</Trans>
+        </button>
       </div>
 
       {/* Mixed approach: Tailwind + Emotion */}
       <div className={`grafana-card ${emotionStyles.mixedCard}`}>
-        <h3 className="text-lg font-semibold mb-2">Mixed Approach</h3>
+        <h3 className="text-lg font-semibold mb-2">
+          <Trans i18nKey="tailwind-example.mixed-title">Mixed Approach</Trans>
+        </h3>
         <p className="text-gray-700">
-          This card combines Tailwind utilities with Emotion styles for theme-aware colors.
+          <Trans i18nKey="tailwind-example.mixed-description">
+            This card combines Tailwind utilities with Emotion styles for theme-aware colors.
+          </Trans>
         </p>
-        <button className={`grafana-button ${emotionStyles.themedButton}`}>Mixed Button</button>
+        <button className={`grafana-button ${emotionStyles.themedButton}`}>
+          <Trans i18nKey="tailwind-example.mixed-button">Mixed Button</Trans>
+        </button>
       </div>
 
       {/* Pure Emotion approach (existing) */}
       <div className={emotionStyles.emotionCard}>
-        <h3 className={emotionStyles.heading}>Pure Emotion Card</h3>
-        <p className={emotionStyles.text}>This card uses the traditional Emotion CSS-in-JS approach.</p>
-        <button className={emotionStyles.button}>Emotion Button</button>
+        <h3 className={emotionStyles.heading}>
+          <Trans i18nKey="tailwind-example.emotion-title">Pure Emotion Card</Trans>
+        </h3>
+        <p className={emotionStyles.text}>
+          <Trans i18nKey="tailwind-example.emotion-description">
+            This card uses the traditional Emotion CSS-in-JS approach.
+          </Trans>
+        </p>
+        <button className={emotionStyles.button}>
+          <Trans i18nKey="tailwind-example.emotion-button">Emotion Button</Trans>
+        </button>
       </div>
 
       {/* Tailwind form example */}
       <div className="grafana-card">
-        <h3 className="text-lg font-semibold mb-2">Tailwind Form Example</h3>
-        <input type="text" className="grafana-input mb-2" placeholder="Enter text..." />
+        <h3 className="text-lg font-semibold mb-2">
+          <Trans i18nKey="tailwind-example.form-title">Tailwind Form Example</Trans>
+        </h3>
+        <input
+          type="text"
+          className="grafana-input mb-2"
+          placeholder={t('tailwind-example.placeholder', 'Enter text...')}
+        />
         <div className="flex gap-2">
-          <button className="grafana-button bg-green-500 hover:bg-green-600 text-white">Submit</button>
-          <button className="grafana-button bg-gray-300 hover:bg-gray-400 text-gray-800">Cancel</button>
+          <button className="grafana-button bg-green-500 hover:bg-green-600 text-white">
+            <Trans i18nKey="tailwind-example.submit-button">Submit</Trans>
+          </button>
+          <button className="grafana-button bg-gray-300 hover:bg-gray-400 text-gray-800">
+            <Trans i18nKey="tailwind-example.cancel-button">Cancel</Trans>
+          </button>
         </div>
       </div>
     </div>
@@ -89,7 +126,7 @@ const getEmotionStyles = (theme: GrafanaTheme2) => ({
     color: theme.colors.primary.contrastText,
     border: 'none',
     cursor: 'pointer',
-    transition: 'background-color 0.2s',
+    transition: theme.transitions.create(['background-color']),
     '&:hover': {
       backgroundColor: theme.colors.primary.shade,
     },
