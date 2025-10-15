@@ -251,6 +251,7 @@
     "style-loader": "4.0.0",
     "stylelint": "16.23.0",
     "stylelint-config-sass-guidelines": "12.1.0",
+    "tailwindcss": "^3.4.0",
     "terser-webpack-plugin": "5.3.14",
     "testing-library-selector": "0.3.1",
     "tracelib": "1.0.1",
