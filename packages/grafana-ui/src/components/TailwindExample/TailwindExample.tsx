@@ -126,7 +126,9 @@ const getEmotionStyles = (theme: GrafanaTheme2) => ({
     color: theme.colors.primary.contrastText,
     border: 'none',
     cursor: 'pointer',
-    transition: theme.transitions.create(['background-color']),
+    [theme.transitions.handleMotion('no-preference')]: {
+      transition: theme.transitions.create(['background-color']),
+    },
     '&:hover': {
       backgroundColor: theme.colors.primary.shade,
     },
